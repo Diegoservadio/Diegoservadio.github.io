@@ -1,0 +1,762 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Diego — Cloud & Security Engineer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0d0f0e;
+  --surface: #141714;
+  --border: rgba(255,255,255,0.07);
+  --border-bright: rgba(255,255,255,0.14);
+  --text: #e8ede9;
+  --text-muted: #7a8a7c;
+  --text-dim: #3d4a3e;
+  --accent: #4ade80;
+  --accent-dim: rgba(74,222,128,0.12);
+  --accent-glow: rgba(74,222,128,0.25);
+  --azure: #60a5fa;
+  --azure-dim: rgba(96,165,250,0.1);
+  --coral: #fb923c;
+  --coral-dim: rgba(251,146,60,0.1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Syne', sans-serif;
+  line-height: 1.6;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+/* Custom cursor */
+.cursor {
+  width: 8px; height: 8px;
+  background: var(--accent);
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: transform 0.1s, width 0.2s, height 0.2s, background 0.2s;
+  mix-blend-mode: normal;
+}
+.cursor-ring {
+  width: 32px; height: 32px;
+  border: 1px solid rgba(74,222,128,0.4);
+  border-radius: 50%;
+  position: fixed;
+  pointer-events: none;
+  z-index: 9998;
+  transform: translate(-50%, -50%);
+  transition: transform 0.18s ease, width 0.2s, height 0.2s;
+}
+body:hover .cursor { opacity: 1; }
+
+/* Grid background */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(74,222,128,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(74,222,128,0.03) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Noise overlay */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.4;
+}
+
+.container {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  position: relative;
+  z-index: 1;
+}
+
+/* NAV */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 1.25rem 0;
+  border-bottom: 1px solid var(--border);
+  background: rgba(13,15,14,0.85);
+  backdrop-filter: blur(12px);
+}
+.nav-inner {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.nav-logo {
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  color: var(--accent);
+  letter-spacing: .04em;
+}
+.nav-links {
+  display: flex;
+  gap: 2rem;
+  list-style: none;
+}
+.nav-links a {
+  font-size: 13px;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-family: 'DM Mono', monospace;
+  letter-spacing: .04em;
+  transition: color .2s;
+}
+.nav-links a:hover { color: var(--text); }
+
+/* HERO */
+.hero {
+  padding: 10rem 0 6rem;
+  position: relative;
+}
+.hero-eyebrow {
+  font-family: 'DM Mono', monospace;
+  font-size: 12px;
+  color: var(--accent);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  margin-bottom: 1.5rem;
+  opacity: 0;
+  animation: fadeUp .6s .1s forwards;
+}
+.hero-name {
+  font-size: clamp(3rem, 8vw, 5.5rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -.03em;
+  margin-bottom: .75rem;
+  opacity: 0;
+  animation: fadeUp .6s .2s forwards;
+}
+.hero-name span { color: var(--accent); }
+.hero-role {
+  font-size: clamp(1.1rem, 2.5vw, 1.4rem);
+  font-weight: 400;
+  color: var(--text-muted);
+  margin-bottom: 2rem;
+  opacity: 0;
+  animation: fadeUp .6s .3s forwards;
+}
+.hero-desc {
+  font-size: 1rem;
+  color: var(--text-muted);
+  max-width: 520px;
+  line-height: 1.75;
+  margin-bottom: 2.5rem;
+  opacity: 0;
+  animation: fadeUp .6s .4s forwards;
+}
+.hero-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .5rem;
+  margin-bottom: 2.5rem;
+  opacity: 0;
+  animation: fadeUp .6s .5s forwards;
+}
+.tag {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  padding: 5px 12px;
+  border-radius: 2px;
+  border: 1px solid var(--border-bright);
+  color: var(--text-muted);
+  letter-spacing: .04em;
+  transition: border-color .2s, color .2s;
+}
+.tag:hover { border-color: var(--accent); color: var(--accent); }
+.tag-azure { border-color: rgba(96,165,250,0.3); color: var(--azure); }
+.tag-net { border-color: rgba(251,146,60,0.3); color: var(--coral); }
+.tag-green { border-color: rgba(74,222,128,0.3); color: var(--accent); }
+
+.hero-cta {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  opacity: 0;
+  animation: fadeUp .6s .6s forwards;
+}
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .75rem 1.5rem;
+  background: var(--accent);
+  color: #0d0f0e;
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  border-radius: 2px;
+  letter-spacing: .04em;
+  transition: background .2s, transform .15s;
+}
+.btn-primary:hover { background: #86efac; transform: translateY(-1px); }
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .75rem 1.5rem;
+  background: transparent;
+  color: var(--text-muted);
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  border: 1px solid var(--border-bright);
+  text-decoration: none;
+  border-radius: 2px;
+  letter-spacing: .04em;
+  transition: border-color .2s, color .2s, transform .15s;
+}
+.btn-secondary:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-1px); }
+
+/* STATUS BADGE */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--accent);
+  border: 1px solid rgba(74,222,128,0.2);
+  padding: 4px 12px;
+  border-radius: 2px;
+  margin-bottom: 1.5rem;
+  letter-spacing: .08em;
+}
+.status-dot {
+  width: 6px; height: 6px;
+  background: var(--accent);
+  border-radius: 50%;
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: .4; transform: scale(.8); }
+}
+
+/* SECTION */
+section { padding: 5rem 0; border-top: 1px solid var(--border); }
+.section-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  margin-bottom: 3rem;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+.section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+/* SKILLS */
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+.skill-block {
+  background: var(--surface);
+  padding: 1.5rem;
+  transition: background .2s;
+}
+.skill-block:hover { background: #191c19; }
+.skill-block-icon {
+  font-size: 1.4rem;
+  margin-bottom: .75rem;
+}
+.skill-block-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: .5rem;
+  letter-spacing: -.01em;
+}
+.skill-block-items {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--text-muted);
+  line-height: 1.9;
+  letter-spacing: .02em;
+}
+.skill-block-items span { display: block; }
+
+/* PROJECTS */
+.projects-list { display: flex; flex-direction: column; gap: 1px; border: 1px solid var(--border); border-radius: 4px; overflow: hidden; }
+.project-item {
+  background: var(--surface);
+  padding: 1.75rem;
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+  transition: background .2s;
+  text-decoration: none;
+  color: inherit;
+}
+.project-item:hover { background: #191c19; }
+.project-item:hover .project-arrow { transform: translate(3px,-3px); color: var(--accent); }
+.project-num {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--text-dim);
+  padding-top: 3px;
+  flex-shrink: 0;
+  width: 24px;
+}
+.project-content { flex: 1; }
+.project-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: .4rem;
+  letter-spacing: -.01em;
+  display: flex;
+  align-items: center;
+  gap: .75rem;
+  flex-wrap: wrap;
+}
+.project-title-status {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  font-weight: 400;
+  padding: 2px 8px;
+  border-radius: 2px;
+}
+.status-live { background: var(--accent-dim); color: var(--accent); border: 1px solid rgba(74,222,128,0.2); }
+.status-wip  { background: rgba(251,146,60,0.1); color: var(--coral); border: 1px solid rgba(251,146,60,0.2); }
+.project-desc {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.7;
+  margin-bottom: .75rem;
+}
+.project-tags { display: flex; flex-wrap: wrap; gap: .35rem; }
+.ptag {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  padding: 3px 8px;
+  border-radius: 2px;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+}
+.project-arrow {
+  font-size: 1.2rem;
+  color: var(--text-dim);
+  transition: transform .2s, color .2s;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+/* ABOUT */
+.about-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 3rem;
+}
+@media (max-width: 600px) { .about-grid { grid-template-columns: 1fr; } }
+.about-text { font-size: 15px; color: var(--text-muted); line-height: 1.9; }
+.about-text p + p { margin-top: 1rem; }
+.about-facts { display: flex; flex-direction: column; gap: 1rem; }
+.fact-row {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+.fact-icon { font-size: 1.1rem; flex-shrink: 0; padding-top: 1px; }
+.fact-label { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: .1em; margin-bottom: 2px; }
+.fact-value { font-size: 13px; color: var(--text-muted); }
+
+/* CONTACT */
+.contact-row {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+.contact-link {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  color: var(--text-muted);
+  text-decoration: none;
+  padding: .6rem 1.25rem;
+  border: 1px solid var(--border-bright);
+  border-radius: 2px;
+  transition: border-color .2s, color .2s;
+  letter-spacing: .04em;
+}
+.contact-link:hover { border-color: var(--accent); color: var(--accent); }
+
+/* FOOTER */
+footer {
+  padding: 2.5rem 0;
+  border-top: 1px solid var(--border);
+  position: relative;
+  z-index: 1;
+}
+.footer-inner {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+.footer-copy {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--text-dim);
+  letter-spacing: .04em;
+}
+
+/* ANIMATIONS */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity .6s ease, transform .6s ease;
+}
+.reveal.visible { opacity: 1; transform: none; }
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--text-dim); border-radius: 2px; }
+
+/* MOBILE */
+@media (max-width: 600px) {
+  .nav-links { display: none; }
+  .hero { padding: 8rem 0 4rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<nav>
+  <div class="nav-inner">
+    <span class="nav-logo">diego.dev</span>
+    <ul class="nav-links">
+      <li><a href="#skills">skills</a></li>
+      <li><a href="#projects">projects</a></li>
+      <li><a href="#about">about</a></li>
+      <li><a href="#contact">contact</a></li>
+    </ul>
+  </div>
+</nav>
+
+<main>
+<div class="container">
+
+  <!-- HERO -->
+  <section class="hero" style="border-top: none; padding-top: 10rem;">
+    <div class="status-badge">
+      <span class="status-dot"></span>
+      OPEN TO OPPORTUNITIES · MILAN & DUBLIN
+    </div>
+    <div class="hero-eyebrow">Cloud & Security Engineer</div>
+    <h1 class="hero-name">Ciao,<br>I'm <span>Diego</span></h1>
+    <p class="hero-role">Azure Infrastructure · Network Engineering · IT Security</p>
+    <p class="hero-desc">
+      Junior cloud engineer based in Milan, building hands-on experience across Azure infrastructure, Cisco networking, and automation. Currently completing an ITS degree in Cloud & Security Engineering and interning at Istituto Marangoni.
+    </p>
+    <div class="hero-tags">
+      <span class="tag tag-azure">Azure · AKS · Terraform</span>
+      <span class="tag tag-net">Cisco IOS · VLAN · STP</span>
+      <span class="tag tag-green">Docker · PowerShell · Python</span>
+      <span class="tag">Microsoft 365</span>
+      <span class="tag">Cisco Meraki</span>
+    </div>
+    <div class="hero-cta">
+      <a href="https://github.com/Diegoservadio" class="btn-primary" target="_blank" rel="noopener">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+        GitHub
+      </a>
+      <a href="mailto:servadiodiego7@gmail.com" class="btn-secondary">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        Get in touch
+      </a>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills">
+    <div class="section-label reveal">01 — Technical skills</div>
+    <div class="skills-grid reveal">
+      <div class="skill-block">
+        <div class="skill-block-icon">☁️</div>
+        <div class="skill-block-title">Cloud & Azure</div>
+        <div class="skill-block-items">
+          <span>Azure VM · VNet · NSG</span>
+          <span>AKS · Azure CLI</span>
+          <span>Terraform / IaC</span>
+          <span>Docker</span>
+        </div>
+      </div>
+      <div class="skill-block">
+        <div class="skill-block-icon">🌐</div>
+        <div class="skill-block-title">Networking</div>
+        <div class="skill-block-items">
+          <span>Cisco IOS · SG300</span>
+          <span>VLAN Design (13+ VLANs)</span>
+          <span>PVST Spanning Tree</span>
+          <span>SSH v2 · Trunk/Access</span>
+        </div>
+      </div>
+      <div class="skill-block">
+        <div class="skill-block-icon">⚡</div>
+        <div class="skill-block-title">Automation</div>
+        <div class="skill-block-items">
+          <span>PowerShell scripting</span>
+          <span>Python basics</span>
+          <span>AD automation</span>
+          <span>Microsoft 365 admin</span>
+        </div>
+      </div>
+      <div class="skill-block">
+        <div class="skill-block-icon">🔒</div>
+        <div class="skill-block-title">Security & Systems</div>
+        <div class="skill-block-items">
+          <span>Cisco Meraki</span>
+          <span>Rack / cabling</span>
+          <span>Helpdesk & troubleshooting</span>
+          <span>BIOS / hardware diag</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROJECTS -->
+  <section id="projects">
+    <div class="section-label reveal">02 — Projects</div>
+    <div class="projects-list reveal">
+
+      <a href="https://github.com/Diegoservadio" class="project-item" target="_blank" rel="noopener">
+        <span class="project-num">01</span>
+        <div class="project-content">
+          <div class="project-title">
+            Enterprise Switch Configuration from scratch
+            <span class="project-title-status status-live">completed</span>
+          </div>
+          <p class="project-desc">
+            Full configuration of 4 physical switches (Cisco Catalyst 3560, 2960-L, 2960-X, SG300-28PP) from zero. Implemented 13 VLANs, SSH v2, PVST spanning tree, trunk ports. Navigated CLI differences between standard IOS and SG300 Small Business firmware.
+          </p>
+          <div class="project-tags">
+            <span class="ptag">Cisco IOS</span>
+            <span class="ptag">VLAN</span>
+            <span class="ptag">PVST</span>
+            <span class="ptag">SSH v2</span>
+            <span class="ptag">SG300</span>
+          </div>
+        </div>
+        <span class="project-arrow">↗</span>
+      </a>
+
+      <a href="https://github.com/Diegoservadio" class="project-item" target="_blank" rel="noopener">
+        <span class="project-num">02</span>
+        <div class="project-content">
+          <div class="project-title">
+            Internal AI Documentation Corpus
+            <span class="project-title-status status-wip">in progress</span>
+          </div>
+          <p class="project-desc">
+            Designed Teams folder taxonomy and built a training corpus for an internal AI assistant at Istituto Marangoni. Processed and anonymised a campus ICT manual into 14 segmented topic files. Handled bilingual templates, Excel tracking, and confidential material workflow.
+          </p>
+          <div class="project-tags">
+            <span class="ptag">Microsoft Teams</span>
+            <span class="ptag">PowerShell</span>
+            <span class="ptag">Data anonymization</span>
+            <span class="ptag">AI tooling</span>
+          </div>
+        </div>
+        <span class="project-arrow">↗</span>
+      </a>
+
+      <a href="https://github.com/Diegoservadio" class="project-item" target="_blank" rel="noopener">
+        <span class="project-num">03</span>
+        <div class="project-content">
+          <div class="project-title">
+            Azure Home Lab
+            <span class="project-title-status status-wip">ongoing</span>
+          </div>
+          <p class="project-desc">
+            Personal lab for hands-on Azure practice: VM deployment, VNet + NSG configuration, AKS cluster management, and infrastructure-as-code with Terraform. Container workloads with Docker. Used as preparation for AZ-104 certification.
+          </p>
+          <div class="project-tags">
+            <span class="ptag">Azure</span>
+            <span class="ptag">Terraform</span>
+            <span class="ptag">AKS</span>
+            <span class="ptag">Docker</span>
+            <span class="ptag">IaC</span>
+          </div>
+        </div>
+        <span class="project-arrow">↗</span>
+      </a>
+
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about">
+    <div class="section-label reveal">03 — About</div>
+    <div class="about-grid reveal">
+      <div class="about-text">
+        <p>
+          I'm a junior cloud and network engineer completing an ITS degree in Cloud & Security Engineering (expected September 2026) in Milan. My approach is hands-on: I prefer building and breaking things in a lab over reading slides.
+        </p>
+        <p>
+          Currently interning at Istituto Marangoni, where my work spans helpdesk support, switch infrastructure configuration, and an internal AI documentation project. I enjoy working across the full stack of physical and cloud infrastructure.
+        </p>
+        <p>
+          Actively looking for Azure Cloud Infrastructure or Data Center Technician roles — open to opportunities in Milan and Dublin.
+        </p>
+      </div>
+      <div class="about-facts">
+        <div class="fact-row">
+          <span class="fact-icon">📍</span>
+          <div>
+            <div class="fact-label">Location</div>
+            <div class="fact-value">Milan, Italy · Open to Dublin 🇮🇪</div>
+          </div>
+        </div>
+        <div class="fact-row">
+          <span class="fact-icon">🎓</span>
+          <div>
+            <div class="fact-label">Education</div>
+            <div class="fact-value">ITS Cloud & Security Engineering · Sept 2026</div>
+          </div>
+        </div>
+        <div class="fact-row">
+          <span class="fact-icon">💼</span>
+          <div>
+            <div class="fact-label">Currently</div>
+            <div class="fact-value">Network Engineering Intern · Istituto Marangoni</div>
+          </div>
+        </div>
+        <div class="fact-row">
+          <span class="fact-icon">🎯</span>
+          <div>
+            <div class="fact-label">Target roles</div>
+            <div class="fact-value">Azure Cloud Analyst · Data Center Technician</div>
+          </div>
+        </div>
+        <div class="fact-row">
+          <span class="fact-icon">📜</span>
+          <div>
+            <div class="fact-label">Certifications</div>
+            <div class="fact-value">AZ-900 in progress · CCNA planned</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="section-label reveal">04 — Contact</div>
+    <div class="reveal">
+      <p style="font-size:15px;color:var(--text-muted);margin-bottom:1.75rem;max-width:480px;line-height:1.8;">
+        Open to roles in cloud infrastructure and networking. Feel free to reach out — I reply within 24h.
+      </p>
+      <div class="contact-row">
+        <a href="mailto:servadiodiego7@gmail.com" class="contact-link">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          diegoservadio@gmail.com
+        </a>
+        <a href="https://linkedin.com/in/diegoservadio" class="contact-link" target="_blank" rel="noopener">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+          LinkedIn
+        </a>
+        <a href="https://github.com/Diegoservadio" class="contact-link" target="_blank" rel="noopener">
+          <svg width="13" height="13" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          GitHub
+        </a>
+      </div>
+    </div>
+  </section>
+
+</div>
+</main>
+
+<footer>
+  <div class="footer-inner">
+    <span class="footer-copy">© 2026 Diego · Built with GitHub Pages</span>
+    <span class="footer-copy">Milan, Italy</span>
+  </div>
+</footer>
+
+<script>
+// Custom cursor
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursorRing');
+let mx = 0, my = 0, rx = 0, ry = 0;
+document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; cursor.style.left = mx+'px'; cursor.style.top = my+'px'; });
+(function animRing(){
+  rx += (mx - rx) * 0.12;
+  ry += (my - ry) * 0.12;
+  ring.style.left = rx+'px';
+  ring.style.top = ry+'px';
+  requestAnimationFrame(animRing);
+})();
+document.querySelectorAll('a,button').forEach(el => {
+  el.addEventListener('mouseenter', () => { cursor.style.width='14px'; cursor.style.height='14px'; ring.style.width='44px'; ring.style.height='44px'; });
+  el.addEventListener('mouseleave', () => { cursor.style.width='8px'; cursor.style.height='8px'; ring.style.width='32px'; ring.style.height='32px'; });
+});
+
+// Scroll reveal
+const obs = new IntersectionObserver(entries => {
+  entries.forEach((e,i) => { if(e.isIntersecting){ setTimeout(()=>e.target.classList.add('visible'), i*80); } });
+}, { threshold: 0.1 });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+</script>
+
+</body>
+</html>
