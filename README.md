@@ -6,7 +6,7 @@
 
 [![Portfolio](https://img.shields.io/badge/Portfolio-diegoservadio.github.io-4ade80?style=flat-square&logo=github&logoColor=black)](https://diegoservadio.github.io)
 [![LinkedIn](https://img.shields.io/badge/LinkedIn-Diego_Servadio-0A66C2?style=flat-square&logo=linkedin&logoColor=white)](https://linkedin.com/in/linkedin.com/in/diegoservadio)
-[![Email](https://img.shields.io/badge/Email-contact-EA4335?style=flat-square&logo=gmail&logoColor=white)](mailto:servadiodiego7@gmail.com)
+[![Email](https://img.shields.io/badge/Email-servadiodiego7@gmail.com-EA4335?style=flat-square&logo=gmail&logoColor=white)](mailto:servadiodiego7@gmail.com)
 ![Open to work](https://img.shields.io/badge/Status-Open_to_work-4ade80?style=flat-square)
 
 </div>
