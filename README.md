@@ -54,18 +54,6 @@ Actively looking for **Azure Cloud Infrastructure** and **Data Center Technician
 
 ---
 
-### 📊 GitHub stats
-
-<div align="center">
-
-![Diego's GitHub stats](https://github-readme-stats.vercel.app/api?username=Diegoservadio&show_icons=true&theme=github_dark&hide_border=true&bg_color=0d0f0e&title_color=4ade80&icon_color=4ade80&text_color=7a8a7c)
-
-![Top Languages](https://github-readme-stats.vercel.app/api/top-langs/?username=Diegoservadio&layout=compact&theme=github_dark&hide_border=true&bg_color=0d0f0e&title_color=4ade80&text_color=7a8a7c)
-
-</div>
-
----
-
 ### 🎯 Currently
 
 - 📖 Studying for **AZ-900** (Microsoft Azure Fundamentals)
